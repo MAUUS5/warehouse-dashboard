@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-02-11 19:28:24",
+  "last_updated": "2026-02-12 13:29:42",
   "totals": {
     "loader_running_total": 212079,
     "loader_fronts": 146852,
@@ -9,6 +9,15 @@
     "loader_date": "February 10, 2026",
     "loader_date_short": "Feb 10",
     "loader_month": "February 2026",
+    "loaded_vs_drop": 89469,
+    "avg_loaded_vs_drop": 9941,
+    "late_loads": 0,
+    "roll_over": 14,
+    "avg_roll_over": 1.6,
+    "avg_bins": 184,
+    "max_bins": 208,
+    "min_bins": 123,
+    "avg_nvp": 12,
     "loader_count": 28,
     "pallets_picked": 6269,
     "picker_hours": 567.5,
