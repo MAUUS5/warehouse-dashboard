@@ -1,0 +1,94 @@
+{
+  "last_updated": "2026-02-23 13:37:36",
+  "totals": {
+    "loader_running_total": 409775,
+    "loader_days_tracked": 18,
+    "loader_avg_per_day": 22765,
+    "loader_date": "February 23, 2026",
+    "loader_date_short": "Feb 23",
+    "loader_month": "February 2026",
+    "loaded_vs_drop": 139444,
+    "avg_loaded_vs_drop": 7746,
+    "late_loads": 0,
+    "roll_over": 1,
+    "avg_roll_over": 0.1,
+    "avg_bins": 162,
+    "max_bins": 208,
+    "min_bins": 106,
+    "loader_count": 28,
+    "pallets_picked": 6269,
+    "picker_hours": 567.5,
+    "picker_efficiency": 11.05,
+    "pallets_putaway": 4376,
+    "putaway_hours": 543.0,
+    "putaway_efficiency": 8.06,
+    "picker_count": 16,
+    "putaway_count": 17,
+    "total_staff": 61,
+    "total_hours": 1110.5
+  },
+  "top_pickers": [
+    {
+      "name": "David Kearse",
+      "pallets": 1004,
+      "hours": 44.5,
+      "efficiency": 22.56
+    },
+    {
+      "name": "Travis Abney",
+      "pallets": 704,
+      "hours": 41.5,
+      "efficiency": 16.96
+    },
+    {
+      "name": "Jaylon Williams",
+      "pallets": 733,
+      "hours": 49.75,
+      "efficiency": 14.73
+    },
+    {
+      "name": "Austin Hickox",
+      "pallets": 633,
+      "hours": 43.5,
+      "efficiency": 14.55
+    },
+    {
+      "name": "Thomas Jones",
+      "pallets": 762,
+      "hours": 52.75,
+      "efficiency": 14.45
+    }
+  ],
+  "top_putaway": [
+    {
+      "name": "Silvia Carias",
+      "pallets": 276,
+      "hours": 24,
+      "efficiency": 11.5
+    },
+    {
+      "name": "Donald Lynch",
+      "pallets": 590,
+      "hours": 51.5,
+      "efficiency": 11.46
+    },
+    {
+      "name": "Keyton Washington",
+      "pallets": 496,
+      "hours": 44,
+      "efficiency": 11.27
+    },
+    {
+      "name": "William Butler",
+      "pallets": 307,
+      "hours": 27.75,
+      "efficiency": 11.06
+    },
+    {
+      "name": "Dakota Grubbs",
+      "pallets": 217,
+      "hours": 21,
+      "efficiency": 10.33
+    }
+  ]
+}
