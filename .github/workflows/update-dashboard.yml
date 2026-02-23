@@ -1,0 +1,36 @@
+name: Update Dashboard Daily
+
+on:
+  schedule:
+    # Runs every day at 6:00 AM EST (11:00 UTC)
+    - cron: '0 11 * * *'
+  
+  workflow_dispatch:  # Allows manual trigger from GitHub UI
+
+jobs:
+  update-dashboard:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install openpyxl
+      
+      - name: Run update script
+        run: |
+          python update_dashboard_auto.py
+      
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name 'GitHub Actions Bot'
+          git config --global user.email 'actions@github.com'
+          git add warehouse_data.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update dashboard data - $(date +'%Y-%m-%d %H:%M:%S')" && git push)
