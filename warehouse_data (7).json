@@ -1,0 +1,54 @@
+{
+  "last_updated": "2026-02-23 15:00:00",
+  "totals": {
+    "loader_running_total": 527633,
+    "loader_fronts": 16387,
+    "loader_backs": 16165,
+    "loader_days_tracked": 23,
+    "loader_avg_per_day": 22940,
+    "loader_date": "February 23, 2026",
+    "loader_date_short": "Feb 23",
+    "loader_month": "February 2026",
+    "loaded_vs_drop": 104531,
+    "avg_loaded_vs_drop": 4545,
+    "late_loads": 0,
+    "roll_over": 1,
+    "avg_roll_over": 0.04,
+    "avg_bins": 165,
+    "max_bins": 208,
+    "min_bins": 106,
+    "loader_count": 28,
+    "pallets_picked": 6269,
+    "picker_hours": 567.5,
+    "picker_efficiency": 11.05,
+    "pallets_putaway": 4376,
+    "putaway_hours": 546.45,
+    "putaway_efficiency": 8.01,
+    "picker_count": 16,
+    "putaway_count": 18,
+    "total_staff": 62,
+    "total_hours": 1113.95
+  },
+  "top_pickers": [
+    {
+      "name": "Makaela Culler",
+      "pallets_picked": 850,
+      "hours_worked": 65,
+      "efficiency": 13.08
+    }
+  ],
+  "top_putaway": [
+    {
+      "name": "Donald Lynch",
+      "pallets_putaway": 720,
+      "hours_worked": 62,
+      "efficiency": 11.61
+    }
+  ],
+  "employee_of_month": {
+    "period": "February 2026",
+    "loader": "Malachi Burgess",
+    "picker": "Makaela Culler",
+    "putaway": "Donald Lynch"
+  }
+}
