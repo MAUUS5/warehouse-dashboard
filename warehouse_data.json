@@ -1,20 +1,18 @@
 {
-  "last_updated": "2026-02-23 16:00:00",
+  "last_updated": "2026-02-26 13:41:17",
   "totals": {
-    "loader_running_total": 527633,
-    "loader_fronts": 16387,
-    "loader_backs": 16165,
-    "loader_days_tracked": 23,
-    "loader_avg_per_day": 22940,
-    "loader_date": "February 23, 2026",
-    "loader_date_short": "Feb 23",
+    "loader_running_total": 409775,
+    "loader_days_tracked": 18,
+    "loader_avg_per_day": 22765,
+    "loader_date": "February 26, 2026",
+    "loader_date_short": "Feb 26",
     "loader_month": "February 2026",
-    "loaded_vs_drop": 104531,
-    "avg_loaded_vs_drop": 4545,
+    "loaded_vs_drop": 139444,
+    "avg_loaded_vs_drop": 7746,
     "late_loads": 0,
     "roll_over": 1,
-    "avg_roll_over": 0.04,
-    "avg_bins": 165,
+    "avg_roll_over": 0.1,
+    "avg_bins": 162,
     "max_bins": 208,
     "min_bins": 106,
     "loader_count": 28,
@@ -22,41 +20,75 @@
     "picker_hours": 567.5,
     "picker_efficiency": 11.05,
     "pallets_putaway": 4376,
-    "putaway_hours": 546.45,
-    "putaway_efficiency": 8.01,
+    "putaway_hours": 543.0,
+    "putaway_efficiency": 8.06,
     "picker_count": 16,
-    "putaway_count": 18,
-    "total_staff": 62,
-    "total_hours": 1113.95
-  },
-  "safety": {
-    "start_date": "2023-11-27",
-    "days_without_incident_note": "Auto-calculated from start date",
-    "total_incidents": 2,
-    "injuries": 0,
-    "crew_4_incidents": 2,
-    "open_action_items": 2
+    "putaway_count": 17,
+    "total_staff": 61,
+    "total_hours": 1110.5
   },
   "top_pickers": [
     {
-      "name": "Makaela Culler",
-      "pallets_picked": 850,
-      "hours_worked": 65,
-      "efficiency": 13.08
+      "name": "David Kearse",
+      "pallets": 1004,
+      "hours": 44.5,
+      "efficiency": 22.56
+    },
+    {
+      "name": "Travis Abney",
+      "pallets": 704,
+      "hours": 41.5,
+      "efficiency": 16.96
+    },
+    {
+      "name": "Jaylon Williams",
+      "pallets": 733,
+      "hours": 49.75,
+      "efficiency": 14.73
+    },
+    {
+      "name": "Austin Hickox",
+      "pallets": 633,
+      "hours": 43.5,
+      "efficiency": 14.55
+    },
+    {
+      "name": "Thomas Jones",
+      "pallets": 762,
+      "hours": 52.75,
+      "efficiency": 14.45
     }
   ],
   "top_putaway": [
     {
+      "name": "Silvia Carias",
+      "pallets": 276,
+      "hours": 24,
+      "efficiency": 11.5
+    },
+    {
       "name": "Donald Lynch",
-      "pallets_putaway": 720,
-      "hours_worked": 62,
-      "efficiency": 11.61
+      "pallets": 590,
+      "hours": 51.5,
+      "efficiency": 11.46
+    },
+    {
+      "name": "Keyton Washington",
+      "pallets": 496,
+      "hours": 44,
+      "efficiency": 11.27
+    },
+    {
+      "name": "William Butler",
+      "pallets": 307,
+      "hours": 27.75,
+      "efficiency": 11.06
+    },
+    {
+      "name": "Dakota Grubbs",
+      "pallets": 217,
+      "hours": 21,
+      "efficiency": 10.33
     }
-  ],
-  "employee_of_month": {
-    "period": "February 2026",
-    "loader": "Malachi Burgess",
-    "picker": "Makaela Culler",
-    "putaway": "Donald Lynch"
-  }
+  ]
 }
