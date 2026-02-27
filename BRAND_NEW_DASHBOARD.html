@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <title>US5 Warehouse Dashboard - v573660</title>
+    <style>
+        body {
+            margin: 0;
+            background: #1a1a2e;
+            color: white;
+            font-family: Arial;
+            overflow: hidden;
+        }
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 3vw;
+        }
+        h1 {
+            font-size: 4vw;
+            color: #4ecdc4;
+            margin-bottom: 3vh;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2vw;
+            max-width: 90vw;
+        }
+        .card {
+            background: rgba(255,255,255,0.05);
+            border: 3px solid #4ecdc4;
+            border-radius: 20px;
+            padding: 3vh 2vw;
+        }
+        .value {
+            font-size: 5vw;
+            font-weight: bold;
+            color: #0be881;
+            margin: 2vh 0;
+        }
+        .label {
+            font-size: 2vw;
+            color: #a0a0a0;
+        }
+        .small {
+            font-size: 1.5vw;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div>
+            <h1>🚛 US5 Warehouse Dashboard 🚛</h1>
+            
+            <div class="grid">
+                <div class="card">
+                    <div class="label">Days Without OSHA Recordable</div>
+                    <div class="value" id="safety">820</div>
+                </div>
+                
+                <div class="card">
+                    <div class="label">Total Tires Loaded</div>
+                    <div class="value">573,660</div>
+                    <div class="small">25 days tracked</div>
+                </div>
+                
+                <div class="card">
+                    <div class="label">Average Per Day</div>
+                    <div class="value">22,946</div>
+                </div>
+                
+                <div class="card">
+                    <div class="label">Loaded vs Drop Avg</div>
+                    <div class="value">6,248</div>
+                </div>
+                
+                <div class="card">
+                    <div class="label">Pallets Picked</div>
+                    <div class="value">6,269</div>
+                    <div class="small">16 pickers</div>
+                </div>
+                
+                <div class="card">
+                    <div class="label">Pallets Putaway</div>
+                    <div class="value">4,104</div>
+                    <div class="small">16 staff</div>
+                </div>
+            </div>
+            
+            <p style="margin-top: 3vh; font-size: 1.5vw; color: #666;">
+                Employee of Month (Feb 2026): Malachi Burgess, Makaela Culler, Donald Lynch
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        function updateSafety() {
+            const start = new Date('2023-11-29T00:00:00');
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const days = Math.floor((today - start) / 86400000);
+            document.getElementById('safety').textContent = days;
+        }
+        updateSafety();
+        setInterval(updateSafety, 3600000);
+    </script>
+</body>
+</html>
