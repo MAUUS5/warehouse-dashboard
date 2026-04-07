@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>MAU US5 Warehouse Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; font-family: Arial, sans-serif; overflow: hidden; }
+        .slide { display: none; width: 100vw; height: 100vh; padding: 2vh 2vw; }
+        .slide.active { display: flex; flex-direction: column; justify-content: center; align-items: center; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .slide-title { font-size: 3.5vw; font-weight: bold; color: #4ecdc4; margin-bottom: 2vh; text-align: center; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2.5vw; max-width: 85vw; width: 100%; }
+        .kpi-card { background: rgba(40, 40, 70, 0.8); border: 3px solid #4ecdc4; border-radius: 20px; padding: 3vh 2vw; text-align: center; }
+        .kpi-label { font-size: 1.8vw; color: #a0a0a0; margin-bottom: 2vh; }
+        .kpi-value { font-size: 5vw; font-weight: bold; color: #ffffff; margin-bottom: 1vh; }
+        .kpi-value.highlight { color: #0be881; }
+        .kpi-sublabel { font-size: 1.3vw; color: #808080; }
+        .title-slide { text-align: center; }
+        .title-slide h1 { font-size: 6vw; color: #4ecdc4; margin-bottom: 2vh; }
+        .title-slide p { font-size: 3vw; color: #ffffff; }
+        .award-container { display: flex; flex-direction: column; align-items: center; max-width: 70vw; }
+        .award-title { font-size: 4vw; font-weight: bold; color: #4ecdc4; margin-bottom: 1.5vh; text-align: center; }
+        .award-month { font-size: 2.5vw; color: #ffffff; margin-bottom: 2vh; text-align: center; }
+        .award-name { font-size: 4.5vw; font-weight: bold; color: #0be881; margin-bottom: 3vh; text-align: center; }
+        .award-accomplishments { background: rgba(40, 40, 70, 0.8); border: 3px solid #4ecdc4; border-radius: 15px; padding: 3vh 3vw; width: 100%; }
+        .accomplishments-title { font-size: 2.2vw; font-weight: bold; color: #4ecdc4; margin-bottom: 2vh; text-align: center; }
+        .accomplishments-list { font-size: 1.8vw; color: #ffffff; line-height: 2.2; text-align: left; }
+        .progress-bar { position: fixed; bottom: 0; left: 0; height: 5px; background: #4ecdc4; width: 0%; transition: width 0.1s linear; }
+        .table-container { width: 96vw; max-height: 85vh; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        .totals-table { border-collapse: collapse; font-size: 1.3vw; background: rgba(40, 40, 70, 0.95); width: auto; max-width: 95%; }
+        .totals-table th { background: #2C3E50; color: white; padding: 1.2vh 1vw; text-align: center; font-size: 1.4vw; border: 1px solid #4ecdc4; white-space: nowrap; }
+        .totals-table td { padding: 1vh 1vw; text-align: center; border: 1px solid #4ecdc4; color: white; white-space: nowrap; }
+        .totals-table tbody tr:nth-child(even) { background: rgba(60, 60, 90, 0.6); }
+        .totals-table tbody tr:hover { background: rgba(78, 205, 196, 0.25); }
+        .color-7030A0 { background: #7030A0 !important; color: white !important; }
+        .color-00B050 { background: #00B050 !important; color: white !important; }
+        .color-92D050 { background: #92D050 !important; color: black !important; }
+        .color-FFC000 { background: #FFC000 !important; color: black !important; }
+        .color-C49C48 { background: #C49C48 !important; color: black !important; }
+        .table-title { font-size: 2.8vw; margin-bottom: 1.5vh; }
+    </style>
+</head>
+<body>
+    <div class="slide active">
+        <div class="title-slide">
+            <h1>🚛 MAU US5 Warehouse Dashboard 🚛</h1>
+            <p>Key Performance Indicators</p>
+        </div>
+    </div>
+    <div class="slide">
+        <div class="slide-title">Safety & Loader Operations</div>
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">Days Without OSHA Recordable</div>
+                <div class="kpi-value highlight" id="safety-days">854</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Total Tires Loaded</div>
+                <div class="kpi-value">125,746</div>
+                <div class="kpi-sublabel">6 days tracked</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Average Per Day</div>
+                <div class="kpi-value">25,149</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Loaded vs Drop Avg</div>
+                <div class="kpi-value">5,074</div>
+                <div class="kpi-sublabel">per day</div>
+            </div>
+        </div>
+    </div>
+    <div class="slide">
+        <div class="slide-title">Warehouse Operations</div>
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">Pallets Picked</div>
+                <div class="kpi-value">6,942</div>
+                <div class="kpi-sublabel">16 pickers</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Pallets Putaway</div>
+                <div class="kpi-value">5,683</div>
+                <div class="kpi-sublabel">17 staff</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Late Loads</div>
+                <div class="kpi-value highlight">0</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Average Roll Over</div>
+                <div class="kpi-value">4.50</div>
+            </div>
+        </div>
+    </div>
+    <div class="slide">
+        <div class="slide-title">Additional Metrics</div>
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">Average Bins Available</div>
+                <div class="kpi-value">96</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Max Bins</div>
+                <div class="kpi-value">57</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Min Bins</div>
+                <div class="kpi-value">30</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Loaded vs Drop Total</div>
+                <div class="kpi-value">30,443</div>
+            </div>
+        </div>
+    </div>
+    <div class="slide">
+        <div class="award-container">
+            <div class="award-title">🏆 Loader of the Month 🏆</div>
+            <div class="award-month">March 2026</div>
+            <div class="award-name">Lucas Juarez</div>
+            <div class="award-accomplishments">
+                <div class="accomplishments-title">Key Accomplishments</div>
+                <div class="accomplishments-list">
+                    • Outstanding loading performance<br>
+                    • Consistent high productivity<br>
+                    • Excellent safety record<br>
+                    • Strong team collaboration
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide">
+        <div class="award-container">
+            <div class="award-title">🏆 Picker of the Month 🏆</div>
+            <div class="award-month">March 2026</div>
+            <div class="award-name">Zavius Calloway</div>
+            <div class="award-accomplishments">
+                <div class="accomplishments-title">Key Accomplishments</div>
+                <div class="accomplishments-list">
+                    • Exceptional picking accuracy<br>
+                    • Exceeded productivity targets<br>
+                    • Outstanding efficiency<br>
+                    • Demonstrated excellence
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide">
+        <div class="award-container">
+            <div class="award-title">🏆 Putaway of the Month 🏆</div>
+            <div class="award-month">March 2026</div>
+            <div class="award-name">Dakota Grubbs</div>
+            <div class="award-accomplishments">
+                <div class="accomplishments-title">Key Accomplishments</div>
+                <div class="accomplishments-list">
+                    • Superior putaway performance<br>
+                    • Maintained quality standards<br>
+                    • Excellent organization skills<br>
+                    • Consistent high achievement
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide">
+        <div class="award-container">
+            <div class="award-title">🌟 Associate of the Month 🌟</div>
+            <div class="award-month">March 2026</div>
+            <div class="award-name">Jonathan Ermel</div>
+            <div class="award-accomplishments">
+                <div class="accomplishments-title">Key Accomplishments</div>
+                <div class="accomplishments-list">
+                    • Exceptional overall performance<br>
+                    • Outstanding work ethic<br>
+                    • Strong leadership qualities<br>
+                    • Commitment to excellence
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-title table-title">Loader Efficiency (1 of 3)</div>
+        <div class="table-container">
+            <table class="totals-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Rank</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Total Hours</th>
+                        <th>Total Tires</th>
+                        <th>Tires / hr.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>1</td>
+                        <td>Lucas</td>
+                        <td>Juarez</td>
+                        <td>12.75</td>
+                        <td>5,769</td>
+                        <td>452.47</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>2</td>
+                        <td>Pedro</td>
+                        <td>Lopez</td>
+                        <td>13</td>
+                        <td>5,769</td>
+                        <td>443.77</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>3</td>
+                        <td>Denzell</td>
+                        <td>Kitching</td>
+                        <td>20</td>
+                        <td>8,720</td>
+                        <td>436.00</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>4</td>
+                        <td>Travis</td>
+                        <td>Whitt</td>
+                        <td>28.5</td>
+                        <td>11,924</td>
+                        <td>418.39</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>5</td>
+                        <td>Malcolm</td>
+                        <td>Davis</td>
+                        <td>47.75</td>
+                        <td>19,725</td>
+                        <td>413.09</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>6</td>
+                        <td>Jose</td>
+                        <td>Pulido</td>
+                        <td>27.25</td>
+                        <td>11,226</td>
+                        <td>411.96</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>7</td>
+                        <td>Yoslandy</td>
+                        <td>Perez-Garcia</td>
+                        <td>13.25</td>
+                        <td>5,447</td>
+                        <td>411.09</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>8</td>
+                        <td>Alexander</td>
+                        <td>Cruz</td>
+                        <td>19.25</td>
+                        <td>7,823</td>
+                        <td>406.39</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>9</td>
+                        <td>Carlos</td>
+                        <td>Martinez</td>
+                        <td>44.5</td>
+                        <td>17,742</td>
+                        <td>398.70</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>10</td>
+                        <td>Erik</td>
+                        <td>Gonzalez</td>
+                        <td>47.5</td>
+                        <td>18,794</td>
+                        <td>395.66</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>11</td>
+                        <td>Fermin</td>
+                        <td>Flores Trejo</td>
+                        <td>42.5</td>
+                        <td>16,743</td>
+                        <td>393.95</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>12</td>
+                        <td>Levonta</td>
+                        <td>Grooms</td>
+                        <td>26.75</td>
+                        <td>10,502</td>
+                        <td>392.60</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-title table-title">Loader Efficiency (2 of 3)</div>
+        <div class="table-container">
+            <table class="totals-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Rank</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Total Hours</th>
+                        <th>Total Tires</th>
+                        <th>Tires / hr.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>13</td>
+                        <td>Jasir</td>
+                        <td>Anderson</td>
+                        <td>7</td>
+                        <td>2,734</td>
+                        <td>390.57</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>14</td>
+                        <td>Malachi</td>
+                        <td>Burgess</td>
+                        <td>30.5</td>
+                        <td>11,911</td>
+                        <td>390.52</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>15</td>
+                        <td>William</td>
+                        <td>Rhone</td>
+                        <td>30.5</td>
+                        <td>11,911</td>
+                        <td>390.52</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>16</td>
+                        <td>Juan</td>
+                        <td>Estrada Suarez</td>
+                        <td>43</td>
+                        <td>16,743</td>
+                        <td>389.37</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>17</td>
+                        <td>Ernest</td>
+                        <td>Curry</td>
+                        <td>39.75</td>
+                        <td>15,456</td>
+                        <td>388.83</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>18</td>
+                        <td>Jacob</td>
+                        <td>Lyles</td>
+                        <td>20</td>
+                        <td>7,768</td>
+                        <td>388.40</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>19</td>
+                        <td>Orji</td>
+                        <td>Kalu</td>
+                        <td>53</td>
+                        <td>20,174</td>
+                        <td>380.64</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>20</td>
+                        <td>Bralen</td>
+                        <td>Keisler</td>
+                        <td>15.75</td>
+                        <td>5,832</td>
+                        <td>370.29</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>21</td>
+                        <td>Michael</td>
+                        <td>Gonder Jr.</td>
+                        <td>27.5</td>
+                        <td>10,105</td>
+                        <td>367.45</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>22</td>
+                        <td>Steven</td>
+                        <td>Brown</td>
+                        <td>41</td>
+                        <td>14,378</td>
+                        <td>350.68</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>23</td>
+                        <td>Willis</td>
+                        <td>Mayes</td>
+                        <td>42.25</td>
+                        <td>14,378</td>
+                        <td>340.31</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>24</td>
+                        <td>Kevin</td>
+                        <td>Suarez</td>
+                        <td>39.5</td>
+                        <td>13,358</td>
+                        <td>338.18</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-title table-title">Loader Efficiency (3 of 3)</div>
+        <div class="table-container">
+            <table class="totals-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Rank</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Total Hours</th>
+                        <th>Total Tires</th>
+                        <th>Tires / hr.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>25</td>
+                        <td>Elder</td>
+                        <td>Ndukwe</td>
+                        <td>21.25</td>
+                        <td>7,031</td>
+                        <td>330.87</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>26</td>
+                        <td>Daniel</td>
+                        <td>Ndukwe</td>
+                        <td>21.5</td>
+                        <td>6,970</td>
+                        <td>324.19</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>27</td>
+                        <td>Sendarian</td>
+                        <td>Owens</td>
+                        <td>7.5</td>
+                        <td>2,291</td>
+                        <td>305.47</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>28</td>
+                        <td>Ammar</td>
+                        <td>McRiney</td>
+                        <td>24.25</td>
+                        <td>7,304</td>
+                        <td>301.20</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>29</td>
+                        <td>Mariel</td>
+                        <td>Snipes</td>
+                        <td>16</td>
+                        <td>4,579</td>
+                        <td>286.19</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>30</td>
+                        <td>Stanley</td>
+                        <td>Green</td>
+                        <td>26.25</td>
+                        <td>7,383</td>
+                        <td>281.26</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>31</td>
+                        <td>Akeem</td>
+                        <td>Pierce</td>
+                        <td>19.75</td>
+                        <td>5,418</td>
+                        <td>274.33</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>32</td>
+                        <td>Michael</td>
+                        <td>Williams</td>
+                        <td>29.25</td>
+                        <td>7,957</td>
+                        <td>272.03</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>33</td>
+                        <td>Alton</td>
+                        <td>Dennison</td>
+                        <td>28</td>
+                        <td>7,408</td>
+                        <td>264.57</td>
+                    </tr>
+                    <tr class="color-000000">
+                        <td></td>
+                        <td>34</td>
+                        <td>Sekwan</td>
+                        <td>Jenkins</td>
+                        <td>30.75</td>
+                        <td>6,873</td>
+                        <td>223.51</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-title table-title">Loader Totals (1 of 3)</div>
+        <div class="table-container">
+            <table class="totals-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Week 1: </th>
+                        <th>Week 2: </th>
+                        <th>Week 3: </th>
+                        <th>Week 4: </th>
+                        <th>Totals MTD</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Orji</td>
+                        <td>Kalu</td>
+                        <td>20,174</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>20,174</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Malcolm</td>
+                        <td>Davis</td>
+                        <td>19,725</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>19,725</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Erik</td>
+                        <td>Gonzalez</td>
+                        <td>18,794</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>18,794</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Carlos</td>
+                        <td>Martinez</td>
+                        <td>17,742</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>17,742</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Juan</td>
+                        <td>Estrada Suarez</td>
+                        <td>16,743</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>16,743</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Fermin</td>
+                        <td>Flores Trejo</td>
+                        <td>16,743</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>16,743</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Ernest</td>
+                        <td>Curry</td>
+                        <td>15,456</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>15,456</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>Steven</td>
+                        <td>Brown</td>
+                        <td>14,378</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>14,378</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>Willis</td>
+                        <td>Mayes</td>
+                        <td>14,378</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>14,378</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-title table-title">Loader Totals (2 of 3)</div>
+        <div class="table-container">
+            <table class="totals-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Week 1: </th>
+                        <th>Week 2: </th>
+                        <th>Week 3: </th>
+                        <th>Week 4: </th>
+                        <th>Totals MTD</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>10</td>
+                        <td>Kevin</td>
+                        <td>Suarez</td>
+                        <td>13,358</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>13,358</td>
+                    </tr>
+                    <tr>
+                        <td>11</td>
+                        <td>Travis</td>
+                        <td>Whitt</td>
+                        <td>11,924</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>11,924</td>
+                    </tr>
+                    <tr>
+                        <td>12</td>
+                        <td>Malachi</td>
+                        <td>Burgess</td>
+                        <td>11,911</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>11,911</td>
+                    </tr>
+                    <tr>
+                        <td>13</td>
+                        <td>William</td>
+                        <td>Rhone</td>
+                        <td>11,911</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>11,911</td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td>Jose</td>
+                        <td>Pulido</td>
+                        <td>11,226</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>11,226</td>
+                    </tr>
+                    <tr>
+                        <td>15</td>
+                        <td>Levonta</td>
+                        <td>Grooms</td>
+                        <td>10,502</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>10,502</td>
+                    </tr>
+                    <tr>
+                        <td>16</td>
+                        <td>Michael</td>
+                        <td>Gonder Jr.</td>
+                        <td>10,105</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>10,105</td>
+                    </tr>
+                    <tr>
+                        <td>17</td>
+                        <td>Denzell</td>
+                        <td>Kitching</td>
+                        <td>8,720</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>8,720</td>
+                    </tr>
+                    <tr>
+                        <td>18</td>
+                        <td>Michael</td>
+                        <td>Williams</td>
+                        <td>7,957</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>7,957</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-title table-title">Loader Totals (3 of 3)</div>
+        <div class="table-container">
+            <table class="totals-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Week 1: </th>
+                        <th>Week 2: </th>
+                        <th>Week 3: </th>
+                        <th>Week 4: </th>
+                        <th>Totals MTD</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>19</td>
+                        <td>Alexander</td>
+                        <td>Cruz</td>
+                        <td>7,823</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>7,823</td>
+                    </tr>
+                    <tr>
+                        <td>20</td>
+                        <td>Jacob</td>
+                        <td>Lyles</td>
+                        <td>7,768</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>7,768</td>
+                    </tr>
+                    <tr>
+                        <td>21</td>
+                        <td>Alton</td>
+                        <td>Dennison</td>
+                        <td>7,408</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>7,408</td>
+                    </tr>
+                    <tr>
+                        <td>22</td>
+                        <td>Stanley</td>
+                        <td>Green</td>
+                        <td>7,383</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>7,383</td>
+                    </tr>
+                    <tr>
+                        <td>23</td>
+                        <td>Ammar</td>
+                        <td>McRiney</td>
+                        <td>7,304</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>7,304</td>
+                    </tr>
+                    <tr>
+                        <td>24</td>
+                        <td>Elder</td>
+                        <td>Ndukwe</td>
+                        <td>7,031</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>7,031</td>
+                    </tr>
+                    <tr>
+                        <td>25</td>
+                        <td>Daniel</td>
+                        <td>Ndukwe</td>
+                        <td>6,970</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>6,970</td>
+                    </tr>
+                    <tr>
+                        <td>26</td>
+                        <td>Sekwan</td>
+                        <td>Jenkins</td>
+                        <td>6,873</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>6,873</td>
+                    </tr>
+                    <tr>
+                        <td>27</td>
+                        <td>Bralen</td>
+                        <td>Keisler</td>
+                        <td>5,832</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>5,832</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-title table-title">Picker Efficiency (1 of 2)</div>
+        <div class="table-container">
+            <table class="totals-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>First</th>
+                        <th>Last</th>
+                        <th>Hours Worked</th>
+                        <th>Pallets Picked</th>
+                        <th>Pallets / hr.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="color-7030A0">
+                        <td>1</td>
+                        <td>Jaylon</td>
+                        <td>Williams</td>
+                        <td>46.25</td>
+                        <td>757</td>
+                        <td>16.37</td>
+                    </tr>
+                    <tr class="color-7030A0">
+                        <td>2</td>
+                        <td>Makaela</td>
+                        <td>Culler</td>
+                        <td>43.75</td>
+                        <td>676</td>
+                        <td>15.45</td>
+                    </tr>
+                    <tr class="color-00B050">
+                        <td>3</td>
+                        <td>Travis</td>
+                        <td>Abney</td>
+                        <td>46.25</td>
+                        <td>672</td>
+                        <td>14.53</td>
+                    </tr>
+                    <tr class="color-00B050">
+                        <td>4</td>
+                        <td>Austin</td>
+                        <td>Hickox</td>
+                        <td>51.25</td>
+                        <td>736</td>
+                        <td>14.36</td>
+                    </tr>
+                    <tr class="color-00B050">
+                        <td>5</td>
+                        <td>Joshua</td>
+                        <td>Threatt</td>
+                        <td>21</td>
+                        <td>294</td>
+                        <td>14.00</td>
+                    </tr>
+                    <tr class="color-00B050">
+                        <td>6</td>
+                        <td>David</td>
+                        <td>Kearse</td>
+                        <td>18</td>
+                        <td>251</td>
+                        <td>13.94</td>
+                    </tr>
+                    <tr class="color-92D050">
+                        <td>7</td>
+                        <td>Thomas</td>
+                        <td>Jones</td>
+                        <td>64.25</td>
+                        <td>878</td>
+                        <td>13.67</td>
+                    </tr>
+                    <tr class="color-92D050">
+                        <td>8</td>
+                        <td>Bendrix</td>
+                        <td>Hook</td>
+                        <td>43.75</td>
+                        <td>537</td>
+                        <td>12.27</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-title table-title">Picker Efficiency (2 of 2)</div>
+        <div class="table-container">
+            <table class="totals-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>First</th>
+                        <th>Last</th>
+                        <th>Hours Worked</th>
+                        <th>Pallets Picked</th>
+                        <th>Pallets / hr.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="color-92D050">
+                        <td>9</td>
+                        <td>Akeem</td>
+                        <td>Bouknight</td>
+                        <td>36</td>
+                        <td>394</td>
+                        <td>10.94</td>
+                    </tr>
+                    <tr class="color-92D050">
+                        <td>10</td>
+                        <td>Zavius</td>
+                        <td>Calloway</td>
+                        <td>44.25</td>
+                        <td>459</td>
+                        <td>10.37</td>
+                    </tr>
+                    <tr class="color-FFC000">
+                        <td>11</td>
+                        <td>George</td>
+                        <td>Harris</td>
+                        <td>31.5</td>
+                        <td>322</td>
+                        <td>10.22</td>
+                    </tr>
+                    <tr class="color-FFC000">
+                        <td>12</td>
+                        <td>Desmond</td>
+                        <td>Ledell</td>
+                        <td>16.75</td>
+                        <td>152</td>
+                        <td>9.07</td>
+                    </tr>
+                    <tr class="color-FFC000">
+                        <td>13</td>
+                        <td>Johnathan</td>
+                        <td>Ermel</td>
+                        <td>44</td>
+                        <td>364</td>
+                        <td>8.27</td>
+                    </tr>
+                    <tr class="color-FFFF00">
+                        <td>14</td>
+                        <td>Armando</td>
+                        <td>Avalos</td>
+                        <td>34</td>
+                        <td>267</td>
+                        <td>7.85</td>
+                    </tr>
+                    <tr class="color-FFFF00">
+                        <td>15</td>
+                        <td>Jaren</td>
+                        <td>Martinez</td>
+                        <td>48.25</td>
+                        <td>183</td>
+                        <td>3.79</td>
+                    </tr>
+                    <tr class="color-FFFF00">
+                        <td>16</td>
+                        <td>Gregory</td>
+                        <td>Brown</td>
+                        <td>6.5</td>
+                        <td>0</td>
+                        <td>0.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-title table-title">Picker Totals (1 of 2)</div>
+        <div class="table-container">
+            <table class="totals-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Week 1:</th>
+                        <th>Week 2: </th>
+                        <th>Week 3: </th>
+                        <th>Week 4: </th>
+                        <th>Totals MTD</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Thomas</td>
+                        <td>Jones</td>
+                        <td>878</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>878</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Jaylon</td>
+                        <td>Williams</td>
+                        <td>757</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>757</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Austin</td>
+                        <td>Hickox</td>
+                        <td>736</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>736</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Makaela</td>
+                        <td>Culler</td>
+                        <td>676</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>676</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Travis</td>
+                        <td>Abney</td>
+                        <td>672</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>672</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Bendrix</td>
+                        <td>Hook</td>
+                        <td>537</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>537</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Zavius</td>
+                        <td>Calloway</td>
+                        <td>459</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>459</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>Akeem</td>
+                        <td>Bouknight</td>
+                        <td>394</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>394</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-title table-title">Picker Totals (2 of 2)</div>
+        <div class="table-container">
+            <table class="totals-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Week 1:</th>
+                        <th>Week 2: </th>
+                        <th>Week 3: </th>
+                        <th>Week 4: </th>
+                        <th>Totals MTD</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>9</td>
+                        <td>Johnathan</td>
+                        <td>Ermel</td>
+                        <td>364</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>364</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>George</td>
+                        <td>Harris</td>
+                        <td>322</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>322</td>
+                    </tr>
+                    <tr>
+                        <td>11</td>
+                        <td>Joshua</td>
+                        <td>Threatt</td>
+                        <td>294</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>294</td>
+                    </tr>
+                    <tr>
+                        <td>12</td>
+                        <td>Armando</td>
+                        <td>Avalos</td>
+                        <td>267</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>267</td>
+                    </tr>
+                    <tr>
+                        <td>13</td>
+                        <td>David</td>
+                        <td>Kearse</td>
+                        <td>251</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>251</td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td>Jaren</td>
+                        <td>Martinez</td>
+                        <td>183</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>183</td>
+                    </tr>
+                    <tr>
+                        <td>15</td>
+                        <td>Desmond</td>
+                        <td>Ledell</td>
+                        <td>152</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>152</td>
+                    </tr>
+                    <tr>
+                        <td>16</td>
+                        <td>Gregory</td>
+                        <td>Brown</td>
+                        <td>0</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-title table-title">Putaway Efficiency (1 of 2)</div>
+        <div class="table-container">
+            <table class="totals-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>First</th>
+                        <th>Last</th>
+                        <th>Hours Worked</th>
+                        <th>Pallets Moved</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="color-7030A0">
+                        <td>1</td>
+                        <td>Donald</td>
+                        <td>Lynch</td>
+                        <td>57.25</td>
+                        <td>695</td>
+                    </tr>
+                    <tr class="color-7030A0">
+                        <td>2</td>
+                        <td>Dakota</td>
+                        <td>Grubbs</td>
+                        <td>35.25</td>
+                        <td>412</td>
+                    </tr>
+                    <tr class="color-00B050">
+                        <td>3</td>
+                        <td>Roderick</td>
+                        <td>Myles</td>
+                        <td>34.25</td>
+                        <td>386</td>
+                    </tr>
+                    <tr class="color-00B050">
+                        <td>4</td>
+                        <td>William</td>
+                        <td>Butler</td>
+                        <td>38</td>
+                        <td>423</td>
+                    </tr>
+                    <tr class="color-92D050">
+                        <td>5</td>
+                        <td>Keyton</td>
+                        <td>Washington</td>
+                        <td>38.5</td>
+                        <td>408</td>
+                    </tr>
+                    <tr class="color-92D050">
+                        <td>6</td>
+                        <td>Anthony</td>
+                        <td>Quattlebaum</td>
+                        <td>23.5</td>
+                        <td>231</td>
+                    </tr>
+                    <tr class="color-92D050">
+                        <td>7</td>
+                        <td>Kyietcha</td>
+                        <td>Brown</td>
+                        <td>35</td>
+                        <td>340</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-title table-title">Putaway Efficiency (2 of 2)</div>
+        <div class="table-container">
+            <table class="totals-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>First</th>
+                        <th>Last</th>
+                        <th>Hours Worked</th>
+                        <th>Pallets Moved</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="color-92D050">
+                        <td>8</td>
+                        <td>Gabriel</td>
+                        <td>Cabalbag</td>
+                        <td>34.5</td>
+                        <td>328</td>
+                    </tr>
+                    <tr class="color-FFC000">
+                        <td>9</td>
+                        <td>Tyreak</td>
+                        <td>Rogers</td>
+                        <td>39.25</td>
+                        <td>354</td>
+                    </tr>
+                    <tr class="color-FFC000">
+                        <td>10</td>
+                        <td>Lamar</td>
+                        <td>Washington</td>
+                        <td>24.5</td>
+                        <td>211</td>
+                    </tr>
+                    <tr class="color-FFC000">
+                        <td>11</td>
+                        <td>Daquan</td>
+                        <td>Adams</td>
+                        <td>35.75</td>
+                        <td>304</td>
+                    </tr>
+                    <tr class="color-FFC000">
+                        <td>12</td>
+                        <td>Patrick</td>
+                        <td>Ames</td>
+                        <td>64</td>
+                        <td>524</td>
+                    </tr>
+                    <tr class="color-FFFF00">
+                        <td>13</td>
+                        <td>Christopher</td>
+                        <td>Brice</td>
+                        <td>23.25</td>
+                        <td>171</td>
+                    </tr>
+                    <tr class="color-FFFF00">
+                        <td>14</td>
+                        <td>Michael</td>
+                        <td>Orta</td>
+                        <td>47</td>
+                        <td>334</td>
+                    </tr>
+                    <tr class="color-FFFF00">
+                        <td>15</td>
+                        <td>Ashley</td>
+                        <td>Fuller</td>
+                        <td>23</td>
+                        <td>156</td>
+                    </tr>
+                    <tr class="color-FFFF00">
+                        <td>16</td>
+                        <td>Virgil</td>
+                        <td>Calvin</td>
+                        <td>36</td>
+                        <td>244</td>
+                    </tr>
+                    <tr class="color-FFFF00">
+                        <td>17</td>
+                        <td>Tashan</td>
+                        <td>Charles</td>
+                        <td>31.75</td>
+                        <td>162</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-title table-title">Putaway Totals (1 of 2)</div>
+        <div class="table-container">
+            <table class="totals-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Week 1:  </th>
+                        <th>Week 2: </th>
+                        <th>Week 3:</th>
+                        <th>Week 4: </th>
+                        <th>Week 5: </th>
+                        <th>Totals MTD</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Donald</td>
+                        <td>Lynch</td>
+                        <td>695</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>695</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Patrick</td>
+                        <td>Ames</td>
+                        <td>524</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>524</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>William</td>
+                        <td>Butler</td>
+                        <td>423</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>423</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Dakota</td>
+                        <td>Grubbs</td>
+                        <td>412</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>412</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Keyton</td>
+                        <td>Washington</td>
+                        <td>408</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>408</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Roderick</td>
+                        <td>Myles</td>
+                        <td>386</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>386</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Tyreak</td>
+                        <td>Rogers</td>
+                        <td>354</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>354</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-title table-title">Putaway Totals (2 of 2)</div>
+        <div class="table-container">
+            <table class="totals-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Week 1:  </th>
+                        <th>Week 2: </th>
+                        <th>Week 3:</th>
+                        <th>Week 4: </th>
+                        <th>Week 5: </th>
+                        <th>Totals MTD</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>8</td>
+                        <td>Kyietcha</td>
+                        <td>Brown</td>
+                        <td>340</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>340</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>Michael</td>
+                        <td>Orta</td>
+                        <td>334</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>334</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>Gabriel</td>
+                        <td>Cabalbag</td>
+                        <td>328</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>328</td>
+                    </tr>
+                    <tr>
+                        <td>11</td>
+                        <td>Daquan</td>
+                        <td>Adams</td>
+                        <td>304</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>304</td>
+                    </tr>
+                    <tr>
+                        <td>12</td>
+                        <td>Virgil</td>
+                        <td>Calvin</td>
+                        <td>244</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>244</td>
+                    </tr>
+                    <tr>
+                        <td>13</td>
+                        <td>Anthony</td>
+                        <td>Quattlebaum</td>
+                        <td>231</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>231</td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td>Lamar</td>
+                        <td>Washington</td>
+                        <td>211</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>211</td>
+                    </tr>
+                    <tr>
+                        <td>15</td>
+                        <td>Christopher</td>
+                        <td>Brice</td>
+                        <td>171</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>171</td>
+                    </tr>
+                    <tr>
+                        <td>16</td>
+                        <td>Tashan</td>
+                        <td>Charles</td>
+                        <td>162</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>162</td>
+                    </tr>
+                    <tr>
+                        <td>17</td>
+                        <td>Ashley</td>
+                        <td>Fuller</td>
+                        <td>156</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>156</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-title table-title">Bin Maker/Cons Efficiency</div>
+        <div class="table-container">
+            <table class="totals-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>First</th>
+                        <th>Last</th>
+                        <th>Hours Worked</th>
+                        <th>Moves</th>
+                        <th>Pallets / hr.</th>
+                        <th>12 hr. Projection</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="color-7030A0">
+                        <td>1</td>
+                        <td>Trynatee</td>
+                        <td>Douse</td>
+                        <td>31.5</td>
+                        <td>174</td>
+                        <td>5.52</td>
+                        <td>66.29</td>
+                    </tr>
+                    <tr class="color-00B050">
+                        <td>2</td>
+                        <td>Terrance</td>
+                        <td>Shiver</td>
+                        <td>48.5</td>
+                        <td>264</td>
+                        <td>5.44</td>
+                        <td>65.32</td>
+                    </tr>
+                    <tr class="color-00B050">
+                        <td>3</td>
+                        <td>Bryan</td>
+                        <td>Morant</td>
+                        <td>37.5</td>
+                        <td>196</td>
+                        <td>5.23</td>
+                        <td>62.72</td>
+                    </tr>
+                    <tr class="color-92D050">
+                        <td>4</td>
+                        <td>Terence</td>
+                        <td>Smith</td>
+                        <td>23.5</td>
+                        <td>107</td>
+                        <td>4.55</td>
+                        <td>54.64</td>
+                    </tr>
+                    <tr class="color-92D050">
+                        <td>5</td>
+                        <td>Wayne</td>
+                        <td>Amerson</td>
+                        <td>48</td>
+                        <td>194</td>
+                        <td>4.04</td>
+                        <td>48.50</td>
+                    </tr>
+                    <tr class="color-FFC000">
+                        <td>6</td>
+                        <td>Rodney</td>
+                        <td>Betancourt</td>
+                        <td>47</td>
+                        <td>85</td>
+                        <td>1.81</td>
+                        <td>21.70</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="progress-bar" id="progress"></div>
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const slideInterval = 10000;
+        let progress = 0;
+        function formatNumber(num) { return num.toLocaleString('en-US'); }
+        function updateSafetyDays() {
+            const startDate = new Date('2023-11-29T00:00:00');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const days = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+            const element = document.getElementById('safety-days');
+            if (element) element.textContent = formatNumber(days);
+        }
+        function showSlide(n) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            resetProgress();
+        }
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function resetProgress() {
+            progress = 0;
+            updateProgress();
+        }
+        function updateProgress() {
+            const progressBar = document.getElementById('progress');
+            progressBar.style.width = progress + '%';
+            if (progress < 100) {
+                progress += (100 / (slideInterval / 100));
+                setTimeout(updateProgress, 100);
+            } else {
+                nextSlide();
+            }
+        }
+        updateSafetyDays();
+        setInterval(updateSafetyDays, 3600000);
+        resetProgress();
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') showSlide(currentSlide - 1);
+        });
+    </script>
+</body>
+</html>
