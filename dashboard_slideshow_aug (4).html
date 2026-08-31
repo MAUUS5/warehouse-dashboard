@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAU US5 Warehouse Dashboard - August 2026</title>
+    <style>
+        :root {
+            --bg-1:#0e1220; --bg-2:#161c30;
+            --accent:#4ecdc4; --accent-dim:rgba(78,205,196,0.45);
+            --success:#34d399; --success-dim:rgba(52,211,153,0.45);
+            --surface:rgba(255,255,255,0.045); --surface-border:rgba(255,255,255,0.09);
+            --text-primary:#f2f5f9; --text-secondary:#9aa5b8; --text-muted:#6b7688;
+            --header-bg:#1b2338;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background:linear-gradient(160deg,var(--bg-1) 0%,var(--bg-2) 100%);
+            color:var(--text-primary);
+            font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
+            overflow:hidden; height:100vh; width:100vw;
+        }
+        .slide { display:none; width:100vw; height:100vh; padding:2vh 2vw; }
+        .slide.active { display:flex; flex-direction:column; justify-content:center; align-items:center; animation:fadeIn 0.5s; }
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+        .slide-title { font-size:clamp(24px,3.1vw,52px); font-weight:600; letter-spacing:-0.01em; color:var(--accent); margin-bottom:2vh; text-align:center; }
+        .kpi-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1.6vw; max-width:84vw; width:100%; }
+        .kpi-card {
+            background:var(--surface); border:1px solid var(--surface-border); border-top:3px solid var(--accent-dim);
+            border-radius:14px; padding:2.2vh 1.8vw; text-align:center;
+            box-shadow:0 8px 28px rgba(0,0,0,0.28);
+        }
+        .kpi-card.highlight { border-top-color:var(--success-dim); }
+        .kpi-icon { width:clamp(20px,1.9vw,32px); height:clamp(20px,1.9vw,32px); color:var(--accent); margin-bottom:0.8vh; }
+        .kpi-card.highlight .kpi-icon { color:var(--success); }
+        .kpi-label { font-size:clamp(12px,1.15vw,18px); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-secondary); margin-bottom:1.1vh; }
+        .kpi-value { font-size:clamp(30px,4.3vw,64px); font-weight:700; letter-spacing:-0.02em; color:var(--text-primary); margin-bottom:0.6vh; font-variant-numeric:proportional-nums; }
+        .kpi-value.highlight { color:var(--success); }
+        .kpi-sublabel { font-size:clamp(11px,1.05vw,16px); color:var(--text-muted); }
+        .title-slide { text-align:center; }
+        .title-slide h1 { font-size:clamp(32px,5vw,72px); font-weight:600; letter-spacing:-0.01em; color:var(--accent); margin-bottom:2vh; }
+        .title-slide p { font-size:clamp(16px,2.4vw,34px); font-weight:400; color:var(--text-secondary); }
+        .award-container { display:flex; flex-direction:column; align-items:center; max-width:70vw; }
+        .award-title { font-size:clamp(26px,3.6vw,52px); font-weight:600; color:var(--accent); margin-bottom:1.5vh; text-align:center; }
+        .award-month { font-size:clamp(14px,2vw,28px); color:var(--text-secondary); margin-bottom:1.5vh; text-align:center; }
+        .award-name { font-size:clamp(28px,3.9vw,56px); font-weight:700; color:var(--success); margin-bottom:2.5vh; text-align:center; }
+        .award-accomplishments { background:var(--surface); border:1px solid var(--surface-border); border-top:3px solid var(--accent-dim); border-radius:14px; padding:2.5vh 3vw; width:100%; box-shadow:0 8px 28px rgba(0,0,0,0.28); }
+        .accomplishments-title { font-size:clamp(15px,1.85vw,26px); font-weight:600; text-transform:uppercase; letter-spacing:0.04em; color:var(--accent); margin-bottom:1.5vh; text-align:center; }
+        .accomplishments-list { font-size:clamp(14px,1.55vw,22px); color:var(--text-primary); line-height:2.1; text-align:left; }
+        .table-container { width:96vw; max-height:88vh; overflow:auto; display:flex; justify-content:center; align-items:flex-start; }
+        .totals-table { border-collapse:collapse; font-size:clamp(12px,1.15vw,18px); background:var(--surface); border-radius:10px; overflow:hidden; }
+        .totals-table th {
+            background:var(--header-bg); color:var(--text-secondary); font-weight:600; text-transform:uppercase; letter-spacing:0.04em;
+            padding:1.1vh 1vw; font-size:clamp(11px,1vw,15px); border:none; border-bottom:2px solid var(--accent-dim); white-space:nowrap;
+        }
+        .totals-table td { padding:0.85vh 1vw; border:none; border-bottom:1px solid rgba(255,255,255,0.06); color:var(--text-primary); white-space:nowrap; font-variant-numeric:tabular-nums; }
+        .totals-table th:nth-child(1), .totals-table td:nth-child(1) { text-align:center; color:var(--text-muted); }
+        .totals-table th:nth-child(2), .totals-table td:nth-child(2),
+        .totals-table th:nth-child(3), .totals-table td:nth-child(3) { text-align:left; font-variant-numeric:normal; }
+        .totals-table th:nth-child(n+4), .totals-table td:nth-child(n+4) { text-align:right; }
+        .totals-table tbody tr:nth-child(even) { background:rgba(255,255,255,0.025); }
+        .totals-table tbody tr:hover { background:rgba(78,205,196,0.12); }
+        .totals-table tbody tr:last-child td { border-bottom:none; }
+        .color-7030A0 { background:#7030A0!important; color:white!important; }
+        .color-00B050 { background:#00B050!important; color:white!important; }
+        .color-92D050 { background:#92D050!important; color:black!important; }
+        .color-FFC000 { background:#FFC000!important; color:black!important; }
+        .color-FFFF00 { background:#C9A800!important; color:white!important; }
+        .table-title { font-size:clamp(20px,2.5vw,42px); margin-bottom:1.2vh; }
+        .nav-btn { position:fixed; top:50%; transform:translateY(-50%); background:rgba(78,205,196,0.12); border:1px solid var(--accent-dim); color:var(--accent); font-size:clamp(18px,2.2vw,32px); width:clamp(32px,3.6vw,52px); height:clamp(48px,7vh,72px); cursor:pointer; border-radius:8px; z-index:100; transition:background 0.2s; }
+        .nav-btn:hover { background:rgba(78,205,196,0.28); }
+        #btn-prev { left:0.5vw; } #btn-next { right:0.5vw; }
+        .slide-counter { position:fixed; bottom:12px; right:16px; font-size:clamp(11px,1vw,15px); color:var(--text-secondary); opacity:0.8; z-index:100; }
+        .progress-bar { position:fixed; bottom:0; left:0; height:3px; background:var(--accent); width:0%; z-index:100; transition:width 0.1s linear; }
+    </style>
+</head>
+<body>
+
+<div class="slide active"><div class="title-slide"><h1>🚛 MAU US5 Warehouse Dashboard 🚛</h1><p>Key Performance Indicators</p></div></div>
+
+<div class="slide">
+    <div class="slide-title">Safety &amp; Loader Operations</div>
+    <div class="kpi-grid">
+        <div class="kpi-card highlight">
+            <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 20 5 20 11C20 16 16.5 20 12 22 7.5 20 4 16 4 11L4 5Z"/><path d="M8.5 12 11 14.5 15.5 9.5"/></svg>
+            <div class="kpi-label">Days Without OSHA Recordable</div><div class="kpi-value highlight" id="safety-days">985</div>
+        </div>
+        <div class="kpi-card">
+            <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.4"/><line x1="12" y1="4" x2="12" y2="7.4"/><line x1="12" y1="16.6" x2="12" y2="20"/><line x1="4" y1="12" x2="7.4" y2="12"/><line x1="16.6" y1="12" x2="20" y2="12"/></svg>
+            <div class="kpi-label">Total Tires Loaded</div><div class="kpi-value">718,311</div><div class="kpi-sublabel">30 days tracked</div>
+        </div>
+        <div class="kpi-card">
+            <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="5" y2="13"/><line x1="12" y1="19" x2="12" y2="9"/><line x1="19" y1="19" x2="19" y2="5"/></svg>
+            <div class="kpi-label">Average Per Day</div><div class="kpi-value">23,944</div>
+        </div>
+        <div class="kpi-card">
+            <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 19 8 5 M8 5 5 8 M8 5 11 8"/><path d="M16 5 16 19 M16 19 13 16 M16 19 19 16"/></svg>
+            <div class="kpi-label">Loaded vs Drop Avg</div><div class="kpi-value">5,179</div><div class="kpi-sublabel">per day</div>
+        </div>
+    </div>
+</div>
+
+<div class="slide">
+    <div class="slide-title">Warehouse Operations</div>
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8 12 4 21 8 12 12Z"/><path d="M3 8 3 16 12 20 12 12"/><path d="M21 8 21 16 12 20"/></svg>
+            <div class="kpi-label">Pallets Picked</div><div class="kpi-value">20,730</div><div class="kpi-sublabel">15 pickers</div>
+        </div>
+        <div class="kpi-card">
+            <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="1.2"/><path d="M12 3 12 11 M12 11 8.5 7.5 M12 11 15.5 7.5"/></svg>
+            <div class="kpi-label">Pallets Putaway</div><div class="kpi-value">16,543</div><div class="kpi-sublabel">16 staff</div>
+        </div>
+        <div class="kpi-card highlight">
+            <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7 12 12 16 14.5"/></svg>
+            <div class="kpi-label">Late Loads</div><div class="kpi-value highlight">0</div>
+        </div>
+        <div class="kpi-card">
+            <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 13.6-5.7L20 8"/><path d="M20 4v4h-4"/><path d="M20 12a8 8 0 0 1-13.6 5.7L4 16"/><path d="M4 20v-4h4"/></svg>
+            <div class="kpi-label">Average Roll Over</div><div class="kpi-value">4.5</div>
+        </div>
+    </div>
+</div>
+
+<div class="slide">
+    <div class="slide-title">Additional Metrics</div>
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg>
+            <div class="kpi-label">Average Bins Available</div><div class="kpi-value">30</div>
+        </div>
+        <div class="kpi-card">
+            <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 16 12 8 M12 8 8.5 11.5 M12 8 15.5 11.5"/></svg>
+            <div class="kpi-label">Max Bins</div><div class="kpi-value">71</div>
+        </div>
+        <div class="kpi-card">
+            <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 8 12 16 M12 16 8.5 12.5 M12 16 15.5 12.5"/></svg>
+            <div class="kpi-label">Min Bins</div><div class="kpi-value">0</div>
+        </div>
+        <div class="kpi-card">
+            <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 21 8 12 13 3 8Z"/><path d="M3 14 12 19 21 14"/></svg>
+            <div class="kpi-label">Loaded vs Drop Total</div><div class="kpi-value">155,365</div>
+        </div>
+    </div>
+</div>
+
+<div class="slide"><div class="award-container"><div class="award-title">🏆 Loader of the Month 🏆</div><div class="award-month">July 2026</div><div class="award-name">Malachi Burgess</div><div class="award-accomplishments"><div class="accomplishments-title">Key Accomplishments</div><div class="accomplishments-list">• Outstanding loading performance<br>• Consistent high productivity<br>• Excellent safety record<br>• Strong team collaboration</div></div></div></div>
+<div class="slide"><div class="award-container"><div class="award-title">🏆 Picker of the Month 🏆</div><div class="award-month">July 2026</div><div class="award-name">Makaela Culler</div><div class="award-accomplishments"><div class="accomplishments-title">Key Accomplishments</div><div class="accomplishments-list">• Exceptional picking accuracy<br>• Exceeded productivity targets<br>• Outstanding efficiency<br>• Demonstrated excellence</div></div></div></div>
+<div class="slide"><div class="award-container"><div class="award-title">🏆 Putaway of the Month 🏆</div><div class="award-month">July 2026</div><div class="award-name">Donald Lynch</div><div class="award-accomplishments"><div class="accomplishments-title">Key Accomplishments</div><div class="accomplishments-list">• Superior putaway performance<br>• Maintained quality standards<br>• Excellent organization skills<br>• Consistent high achievement</div></div></div></div>
+<div class="slide"><div class="award-container"><div class="award-title">🌟 Employee of the Month 🌟</div><div class="award-month">July 2026</div><div class="award-name">Wayne Amerson</div><div class="award-accomplishments"><div class="accomplishments-title">Key Accomplishments</div><div class="accomplishments-list">• Exceptional overall performance<br>• Outstanding work ethic<br>• Strong leadership qualities<br>• Commitment to excellence</div></div></div></div>
+
+<div class="slide"><div class="slide-title table-title">Loader Efficiency (1 of 3)</div><div class="table-container"><table class="totals-table"><thead><tr><th>Rank</th><th>First Name</th><th>Last Name</th><th>Total Hours</th><th>Total Tires</th><th>Tires / hr.</th></tr></thead><tbody><tr><td>1</td><td>Carlos</td><td>Martinez</td><td>121.0</td><td>50825</td><td>420.0</td></tr><tr><td>2</td><td>Malcolm</td><td>Davis</td><td>180.75</td><td>72562</td><td>401.4</td></tr><tr><td>3</td><td>William</td><td>Rhone</td><td>133.25</td><td>53406</td><td>400.8</td></tr><tr><td>4</td><td>Orji</td><td>Kalu</td><td>149.0</td><td>59704</td><td>400.7</td></tr><tr><td>5</td><td>Yoslandy</td><td>Perez-Garcia</td><td>122.75</td><td>49167</td><td>400.5</td></tr><tr><td>6</td><td>Pedro</td><td>Lopez</td><td>86.25</td><td>34014</td><td>394.4</td></tr><tr><td>7</td><td>Fermin</td><td>Flores Trejo</td><td>104.0</td><td>40854</td><td>392.8</td></tr><tr><td>8</td><td>Malachi</td><td>Burgess</td><td>125.0</td><td>48691</td><td>389.5</td></tr><tr><td>9</td><td>Alexander</td><td>Cruz</td><td>128.75</td><td>49167</td><td>381.9</td></tr></tbody></table></div></div>
+<div class="slide"><div class="slide-title table-title">Loader Efficiency (2 of 3)</div><div class="table-container"><table class="totals-table"><thead><tr><th>Rank</th><th>First Name</th><th>Last Name</th><th>Total Hours</th><th>Total Tires</th><th>Tires / hr.</th></tr></thead><tbody><tr><td>10</td><td>Travis</td><td>Whitt</td><td>80.5</td><td>30652</td><td>380.8</td></tr><tr><td>11</td><td>Lucas</td><td>Juarez</td><td>109.25</td><td>40667</td><td>372.2</td></tr><tr><td>12</td><td>Jose</td><td>Pulido</td><td>147.75</td><td>53302</td><td>360.8</td></tr><tr><td>13</td><td>Levonta</td><td>Grooms</td><td>104.0</td><td>37372</td><td>359.3</td></tr><tr><td>14</td><td>Jacob</td><td>Lyles</td><td>99.25</td><td>35513</td><td>357.8</td></tr><tr><td>15</td><td>Denzell</td><td>Kitching</td><td>93.25</td><td>32583</td><td>349.4</td></tr><tr><td>16</td><td>Willis</td><td>Mayes</td><td>85.0</td><td>29381</td><td>345.7</td></tr><tr><td>17</td><td>Sekwan</td><td>Jenkins</td><td>125.25</td><td>40099</td><td>320.2</td></tr><tr><td>18</td><td>Bralen</td><td>Keisler</td><td>71.75</td><td>22797</td><td>317.7</td></tr></tbody></table></div></div>
+<div class="slide"><div class="slide-title table-title">Loader Efficiency (3 of 3)</div><div class="table-container"><table class="totals-table"><thead><tr><th>Rank</th><th>First Name</th><th>Last Name</th><th>Total Hours</th><th>Total Tires</th><th>Tires / hr.</th></tr></thead><tbody><tr><td>19</td><td>Tyler</td><td>Bryant</td><td>126.5</td><td>38870</td><td>307.3</td></tr><tr><td>20</td><td>Steven</td><td>Brown</td><td>133.0</td><td>40185</td><td>302.1</td></tr><tr><td>21</td><td>Michael</td><td>Bennett</td><td>77.0</td><td>23228</td><td>301.7</td></tr><tr><td>22</td><td>Ammar</td><td>McRiney</td><td>101.25</td><td>29354</td><td>289.9</td></tr><tr><td>23</td><td>Michael</td><td>Gonder Jr.</td><td>98.75</td><td>27468</td><td>278.2</td></tr><tr><td>24</td><td>Elder</td><td>Ndukwe</td><td>104.0</td><td>28783</td><td>276.8</td></tr><tr><td>25</td><td>Stanley</td><td>Green</td><td>172.5</td><td>45926</td><td>266.2</td></tr><tr><td>26</td><td>Keyon</td><td>Hair</td><td>96.25</td><td>24392</td><td>253.4</td></tr></tbody></table></div></div>
+<div class="slide"><div class="slide-title table-title">Loader Totals (1 of 3)</div><div class="table-container"><table class="totals-table"><thead><tr><th>Rank</th><th>First Name</th><th>Last Name</th><th>Week 1</th><th>Week 2</th><th>Week 3</th><th>Week 4</th><th>Week 5</th><th>Totals MTD</th></tr></thead><tbody><tr><td>1</td><td>Malcolm</td><td>Davis</td><td>24263</td><td>29018</td><td>19281</td><td></td><td></td><td>72,562</td></tr><tr><td>2</td><td>Orji</td><td>Kalu</td><td>22988</td><td>14352</td><td>22364</td><td></td><td></td><td>59,704</td></tr><tr><td>3</td><td>William</td><td>Rhone</td><td>11616</td><td>19348</td><td>22442</td><td></td><td></td><td>53,406</td></tr><tr><td>4</td><td>Jose</td><td>Pulido</td><td>20201</td><td>11333</td><td>21768</td><td></td><td></td><td>53,302</td></tr><tr><td>5</td><td>Carlos</td><td>Martinez</td><td>18430</td><td>14232</td><td>18163</td><td></td><td></td><td>50,825</td></tr><tr><td>6</td><td>Alexander</td><td>Cruz</td><td>19051</td><td>17433</td><td>12683</td><td></td><td></td><td>49,167</td></tr><tr><td>7</td><td>Yoslandy</td><td>Perez-Garcia</td><td>19051</td><td>17433</td><td>12683</td><td></td><td></td><td>49,167</td></tr><tr><td>8</td><td>Malachi</td><td>Burgess</td><td>9210</td><td>16104</td><td>23377</td><td></td><td></td><td>48,691</td></tr><tr><td>9</td><td>Stanley</td><td>Green</td><td>17371</td><td>15145</td><td>13410</td><td></td><td></td><td>45,926</td></tr></tbody></table></div></div>
+<div class="slide"><div class="slide-title table-title">Loader Totals (2 of 3)</div><div class="table-container"><table class="totals-table"><thead><tr><th>Rank</th><th>First Name</th><th>Last Name</th><th>Week 1</th><th>Week 2</th><th>Week 3</th><th>Week 4</th><th>Week 5</th><th>Totals MTD</th></tr></thead><tbody><tr><td>10</td><td>Fermin</td><td>Flores Trejo</td><td>11681</td><td>10624</td><td>18549</td><td></td><td></td><td>40,854</td></tr><tr><td>11</td><td>Lucas</td><td>Juarez</td><td>15518</td><td>16254</td><td>8895</td><td></td><td></td><td>40,667</td></tr><tr><td>12</td><td>Steven</td><td>Brown</td><td>15265</td><td>12352</td><td>12568</td><td></td><td></td><td>40,185</td></tr><tr><td>13</td><td>Sekwan</td><td>Jenkins</td><td>10328</td><td>17621</td><td>12150</td><td></td><td></td><td>40,099</td></tr><tr><td>14</td><td>Tyler</td><td>Bryant</td><td>15265</td><td>9259</td><td>14346</td><td></td><td></td><td>38,870</td></tr><tr><td>15</td><td>Levonta</td><td>Grooms</td><td>11748</td><td>12763</td><td>12861</td><td></td><td></td><td>37,372</td></tr><tr><td>16</td><td>Jacob</td><td>Lyles</td><td>15804</td><td>8334</td><td>11375</td><td></td><td></td><td>35,513</td></tr><tr><td>17</td><td>Pedro</td><td>Lopez</td><td>12512</td><td>12607</td><td>8895</td><td></td><td></td><td>34,014</td></tr><tr><td>18</td><td>Denzell</td><td>Kitching</td><td>16823</td><td>3850</td><td>11910</td><td></td><td></td><td>32,583</td></tr></tbody></table></div></div>
+<div class="slide"><div class="slide-title table-title">Loader Totals (3 of 3)</div><div class="table-container"><table class="totals-table"><thead><tr><th>Rank</th><th>First Name</th><th>Last Name</th><th>Week 1</th><th>Week 2</th><th>Week 3</th><th>Week 4</th><th>Week 5</th><th>Totals MTD</th></tr></thead><tbody><tr><td>19</td><td>Travis</td><td>Whitt</td><td>6509</td><td>17350</td><td>6793</td><td></td><td></td><td>30,652</td></tr><tr><td>20</td><td>Willis</td><td>Mayes</td><td>15290</td><td>7823</td><td>6268</td><td></td><td></td><td>29,381</td></tr><tr><td>21</td><td>Ammar</td><td>McRiney</td><td>12830</td><td>6911</td><td>9613</td><td></td><td></td><td>29,354</td></tr><tr><td>22</td><td>Elder</td><td>Ndukwe</td><td>10065</td><td>11166</td><td>7552</td><td></td><td></td><td>28,783</td></tr><tr><td>23</td><td>Michael</td><td>Gonder Jr.</td><td>7124</td><td>11574</td><td>8770</td><td></td><td></td><td>27,468</td></tr><tr><td>24</td><td>Keyon</td><td>Hair</td><td>8262</td><td>8178</td><td>7952</td><td></td><td></td><td>24,392</td></tr><tr><td>25</td><td>Michael</td><td>Bennett</td><td>12859</td><td>10369</td><td>0</td><td></td><td></td><td>23,228</td></tr><tr><td>26</td><td>Bralen</td><td>Keisler</td><td>6922</td><td>12506</td><td>3369</td><td></td><td></td><td>22,797</td></tr></tbody></table></div></div>
+<div class="slide"><div class="slide-title table-title">Picker Efficiency (1 of 2)</div><div class="table-container"><table class="totals-table"><thead><tr><th>Rank</th><th>First Name</th><th>Last Name</th><th>Total Hours</th><th>Pallets Picked</th><th>Pallets / hr.</th></tr></thead><tbody><tr><td>1</td><td>Jaylon</td><td>Williams</td><td>135.5</td><td>2094</td><td>15.5</td></tr><tr><td>2</td><td>David</td><td>Kearse</td><td>65.0</td><td>1004</td><td>15.4</td></tr><tr><td>3</td><td>Armando</td><td>Avalos</td><td>84.25</td><td>1296</td><td>15.4</td></tr><tr><td>4</td><td>Bendrix</td><td>Hook</td><td>86.75</td><td>1294</td><td>14.9</td></tr><tr><td>5</td><td>Johnathan</td><td>Ermel</td><td>118.25</td><td>1725</td><td>14.6</td></tr><tr><td>6</td><td>Makaela</td><td>Culler</td><td>186.75</td><td>2695</td><td>14.4</td></tr><tr><td>7</td><td>Gregory</td><td>Brown</td><td>90.25</td><td>1280</td><td>14.2</td></tr><tr><td>8</td><td>Zavius</td><td>Calloway</td><td>146.75</td><td>1998</td><td>13.6</td></tr></tbody></table></div></div>
+<div class="slide"><div class="slide-title table-title">Picker Efficiency (2 of 2)</div><div class="table-container"><table class="totals-table"><thead><tr><th>Rank</th><th>First Name</th><th>Last Name</th><th>Total Hours</th><th>Pallets Picked</th><th>Pallets / hr.</th></tr></thead><tbody><tr><td>9</td><td>Travis</td><td>Abney</td><td>118.25</td><td>1495</td><td>12.6</td></tr><tr><td>10</td><td>Akeem</td><td>Bouknight</td><td>109.5</td><td>1296</td><td>11.8</td></tr><tr><td>11</td><td>Jalen</td><td>Brown</td><td>139.25</td><td>1631</td><td>11.7</td></tr><tr><td>12</td><td>George</td><td>Harris</td><td>112.0</td><td>1265</td><td>11.3</td></tr><tr><td>13</td><td>O'Mari</td><td>Rajah</td><td>84.5</td><td>854</td><td>10.1</td></tr><tr><td>14</td><td>Kyle</td><td>Graham</td><td>87.75</td><td>657</td><td>7.5</td></tr><tr><td>15</td><td>Zacchaeus</td><td>Johnson</td><td>82.5</td><td>146</td><td>1.8</td></tr></tbody></table></div></div>
+<div class="slide"><div class="slide-title table-title">Picker Totals (1 of 2)</div><div class="table-container"><table class="totals-table"><thead><tr><th>Rank</th><th>First Name</th><th>Last Name</th><th>Week 1</th><th>Week 2</th><th>Week 3</th><th>Week 4</th><th>Week 5</th><th>Totals MTD</th></tr></thead><tbody><tr><td>1</td><td>Makaela</td><td>Culler</td><td>921</td><td>912</td><td>862</td><td></td><td></td><td>2,695</td></tr><tr><td>2</td><td>Jaylon</td><td>Williams</td><td>905</td><td>417</td><td>772</td><td></td><td></td><td>2,094</td></tr><tr><td>3</td><td>Zavius</td><td>Calloway</td><td>503</td><td>961</td><td>534</td><td></td><td></td><td>1,998</td></tr><tr><td>4</td><td>Johnathan</td><td>Ermel</td><td>695</td><td>408</td><td>622</td><td></td><td></td><td>1,725</td></tr><tr><td>5</td><td>Jalen</td><td>Brown</td><td>398</td><td>326</td><td>907</td><td></td><td></td><td>1,631</td></tr><tr><td>6</td><td>Travis</td><td>Abney</td><td>274</td><td>477</td><td>744</td><td></td><td></td><td>1,495</td></tr><tr><td>7</td><td>Armando</td><td>Avalos</td><td>319</td><td>628</td><td>349</td><td></td><td></td><td>1,296</td></tr><tr><td>8</td><td>Akeem</td><td>Bouknight</td><td>554</td><td>365</td><td>377</td><td></td><td></td><td>1,296</td></tr></tbody></table></div></div>
+<div class="slide"><div class="slide-title table-title">Picker Totals (2 of 2)</div><div class="table-container"><table class="totals-table"><thead><tr><th>Rank</th><th>First Name</th><th>Last Name</th><th>Week 1</th><th>Week 2</th><th>Week 3</th><th>Week 4</th><th>Week 5</th><th>Totals MTD</th></tr></thead><tbody><tr><td>9</td><td>Bendrix</td><td>Hook</td><td>581</td><td>155</td><td>558</td><td></td><td></td><td>1,294</td></tr><tr><td>10</td><td>Gregory</td><td>Brown</td><td>503</td><td>418</td><td>359</td><td></td><td></td><td>1,280</td></tr><tr><td>11</td><td>George</td><td>Harris</td><td>510</td><td>533</td><td>222</td><td></td><td></td><td>1,265</td></tr><tr><td>12</td><td>David</td><td>Kearse</td><td>298</td><td>706</td><td>0</td><td></td><td></td><td>1,004</td></tr><tr><td>13</td><td>O'Mari</td><td>Rajah</td><td>417</td><td>272</td><td>165</td><td></td><td></td><td>854</td></tr><tr><td>15</td><td>Kyle</td><td>Graham</td><td>253</td><td>162</td><td>242</td><td></td><td></td><td>657</td></tr><tr><td>16</td><td>Zacchaeus</td><td>Johnson</td><td>0</td><td>0</td><td>146</td><td></td><td></td><td>146</td></tr></tbody></table></div></div>
+<div class="slide"><div class="slide-title table-title">Putaway Efficiency (1 of 2)</div><div class="table-container"><table class="totals-table"><thead><tr><th>Rank</th><th>First Name</th><th>Last Name</th><th>Total Hours</th><th>Pallets Moved</th><th>Pallets / hr.</th></tr></thead><tbody><tr><td>1</td><td>Donald</td><td>Lynch</td><td>138.25</td><td>1673</td><td>12.1</td></tr><tr><td>2</td><td>Jimmy</td><td>McBride</td><td>135.0</td><td>1501</td><td>11.1</td></tr><tr><td>3</td><td>Gabriel</td><td>Cabalbag</td><td>122.75</td><td>1313</td><td>10.7</td></tr><tr><td>4</td><td>Dakota</td><td>Grubbs</td><td>71.75</td><td>758</td><td>10.6</td></tr><tr><td>5</td><td>Michael</td><td>Orta</td><td>121.5</td><td>1252</td><td>10.3</td></tr><tr><td>6</td><td>Darryl</td><td>Dozier</td><td>106.0</td><td>1059</td><td>10.0</td></tr><tr><td>7</td><td>Tashan</td><td>Charles</td><td>97.5</td><td>932</td><td>9.6</td></tr><tr><td>8</td><td>Jonathan</td><td>Seabrooks</td><td>136.25</td><td>1222</td><td>9.0</td></tr></tbody></table></div></div>
+<div class="slide"><div class="slide-title table-title">Putaway Efficiency (2 of 2)</div><div class="table-container"><table class="totals-table"><thead><tr><th>Rank</th><th>First Name</th><th>Last Name</th><th>Total Hours</th><th>Pallets Moved</th><th>Pallets / hr.</th></tr></thead><tbody><tr><td>9</td><td>Patrick</td><td>Ames</td><td>105.75</td><td>920</td><td>8.7</td></tr><tr><td>10</td><td>Virgil</td><td>Calvin</td><td>108.5</td><td>928</td><td>8.6</td></tr><tr><td>11</td><td>Anthony</td><td>Quattlebaum</td><td>120.75</td><td>1014</td><td>8.4</td></tr><tr><td>12</td><td>Daquan</td><td>Adams</td><td>148.0</td><td>1241</td><td>8.4</td></tr><tr><td>13</td><td>Lamar</td><td>Washington</td><td>137.75</td><td>1126</td><td>8.2</td></tr><tr><td>14</td><td>Tyreak</td><td>Rogers</td><td>121.5</td><td>764</td><td>6.3</td></tr><tr><td>15</td><td>Jakyrick</td><td>Hallingquest</td><td>106.0</td><td>630</td><td>5.9</td></tr><tr><td>16</td><td>William</td><td>Butler</td><td>22.5</td><td>210</td><td>0.0</td></tr></tbody></table></div></div>
+<div class="slide"><div class="slide-title table-title">Putaway Totals (1 of 2)</div><div class="table-container"><table class="totals-table"><thead><tr><th>Rank</th><th>First Name</th><th>Last Name</th><th>Week 1</th><th>Week 2</th><th>Week 3</th><th>Week 4</th><th>Week 5</th><th>Totals MTD</th></tr></thead><tbody><tr><td>1</td><td>Donald</td><td>Lynch</td><td>624</td><td>492</td><td>557</td><td></td><td></td><td>1,673</td></tr><tr><td>2</td><td>Jimmy</td><td>McBride</td><td>380</td><td>508</td><td>613</td><td></td><td></td><td>1,501</td></tr><tr><td>3</td><td>Gabriel</td><td>Cabalbag</td><td>487</td><td>464</td><td>362</td><td></td><td></td><td>1,313</td></tr><tr><td>4</td><td>Michael</td><td>Orta</td><td>413</td><td>320</td><td>519</td><td></td><td></td><td>1,252</td></tr><tr><td>5</td><td>Daquan</td><td>Adams</td><td>423</td><td>530</td><td>288</td><td></td><td></td><td>1,241</td></tr><tr><td>6</td><td>Jonathan</td><td>Seabrooks</td><td>315</td><td>457</td><td>450</td><td></td><td></td><td>1,222</td></tr><tr><td>7</td><td>Lamar</td><td>Washington</td><td>361</td><td>265</td><td>500</td><td></td><td></td><td>1,126</td></tr><tr><td>8</td><td>Darryl</td><td>Dozier</td><td>325</td><td>258</td><td>476</td><td></td><td></td><td>1,059</td></tr></tbody></table></div></div>
+<div class="slide"><div class="slide-title table-title">Putaway Totals (2 of 2)</div><div class="table-container"><table class="totals-table"><thead><tr><th>Rank</th><th>First Name</th><th>Last Name</th><th>Week 1</th><th>Week 2</th><th>Week 3</th><th>Week 4</th><th>Week 5</th><th>Totals MTD</th></tr></thead><tbody><tr><td>9</td><td>Anthony</td><td>Quattlebaum</td><td>430</td><td>178</td><td>406</td><td></td><td></td><td>1,014</td></tr><tr><td>10</td><td>Tashan</td><td>Charles</td><td>226</td><td>398</td><td>308</td><td></td><td></td><td>932</td></tr><tr><td>11</td><td>Virgil</td><td>Calvin</td><td>327</td><td>346</td><td>255</td><td></td><td></td><td>928</td></tr><tr><td>12</td><td>Patrick</td><td>Ames</td><td>388</td><td>337</td><td>195</td><td></td><td></td><td>920</td></tr><tr><td>13</td><td>Tyreak</td><td>Rogers</td><td>274</td><td>186</td><td>304</td><td></td><td></td><td>764</td></tr><tr><td>14</td><td>Dakota</td><td>Grubbs</td><td>144</td><td>365</td><td>249</td><td></td><td></td><td>758</td></tr><tr><td>15</td><td>Jakyrick</td><td>Hallingquest</td><td>172</td><td>266</td><td>192</td><td></td><td></td><td>630</td></tr><tr><td>16</td><td>William</td><td>Butler</td><td>0</td><td>0</td><td>210</td><td></td><td></td><td>210</td></tr></tbody></table></div></div>
+<div class="slide"><div class="slide-title table-title">Bin Maker/Cons Efficiency</div><div class="table-container"><table class="totals-table"><thead><tr><th>Rank</th><th>First Name</th><th>Last Name</th><th>Hours Worked</th><th>Moves</th><th>Moves / hr.</th><th>12 hr. Projection</th></tr></thead><tbody><tr><td>1</td><td>Austin</td><td>Hickox</td><td>99.0</td><td>841</td><td>8.5</td><td>101.9</td></tr><tr><td>2</td><td>Boyd</td><td>Evans</td><td>103.75</td><td>778</td><td>7.5</td><td>90.0</td></tr><tr><td>3</td><td>Terence</td><td>Smith</td><td>105.75</td><td>471</td><td>4.5</td><td>53.4</td></tr><tr><td>4</td><td>Terrance</td><td>Shiver</td><td>144.5</td><td>630</td><td>4.4</td><td>52.3</td></tr><tr><td>5</td><td>Wayne</td><td>Amerson</td><td>83.0</td><td>357</td><td>4.3</td><td>51.6</td></tr><tr><td>6</td><td>Rodney</td><td>Betancourt</td><td>128.75</td><td>532</td><td>4.1</td><td>49.6</td></tr><tr><td>7</td><td>Kyietcha</td><td>Brown</td><td>118.0</td><td>473</td><td>4.0</td><td>48.1</td></tr></tbody></table></div></div>
+<button class="nav-btn" id="btn-prev" onclick="showSlide(currentSlide-1)">&#8249;</button>
+<button class="nav-btn" id="btn-next" onclick="showSlide(currentSlide+1)">&#8250;</button>
+<div class="slide-counter" id="slide-counter">1 / 23</div>
+<div class="progress-bar" id="progress"></div>
+
+<script>
+    let currentSlide=0,progressTimer=null,progressVal=0;
+    const slides=document.querySelectorAll('.slide'),totalSlides=slides.length;
+    const BASE_INTERVAL=10000,TABLE_INTERVAL=18000;
+    function currentInterval(){return slides[currentSlide].querySelector('.totals-table')?TABLE_INTERVAL:BASE_INTERVAL;}
+    function updateSafetyDays(){const s=new Date('2023-11-29');const t=new Date();t.setHours(0,0,0,0);const d=Math.floor((t-s)/864e5);const el=document.getElementById('safety-days');if(el)el.textContent=d.toLocaleString('en-US');}
+    function updateCounter(){document.getElementById('slide-counter').textContent=(currentSlide+1)+' / '+totalSlides;}
+    function showSlide(n){slides[currentSlide].classList.remove('active');currentSlide=(n+totalSlides)%totalSlides;slides[currentSlide].classList.add('active');updateCounter();resetProgress();}
+    function resetProgress(){if(progressTimer)clearTimeout(progressTimer);progressVal=0;document.getElementById('progress').style.width='0%';tickProgress();}
+    function tickProgress(){const slideInterval=currentInterval();progressVal+=(100/(slideInterval/100));document.getElementById('progress').style.width=Math.min(progressVal,100)+'%';if(progressVal<100){progressTimer=setTimeout(tickProgress,100);}else{showSlide(currentSlide+1);}}
+    document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')showSlide(currentSlide+1);if(e.key==='ArrowLeft')showSlide(currentSlide-1);});
+    let tx=0;document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;});document.addEventListener('touchend',e=>{const d=tx-e.changedTouches[0].clientX;if(Math.abs(d)>50)showSlide(currentSlide+(d>0?1:-1));});
+    updateSafetyDays();updateCounter();setInterval(updateSafetyDays,3600000);resetProgress();
+</script>
+</body>
+</html>
