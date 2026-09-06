@@ -1,11 +1,11 @@
 {
-  "last_updated": "2026-09-05 13:48:51",
+  "last_updated": "2026-09-06 14:05:19",
   "totals": {
     "loader_running_total": 409775,
     "loader_days_tracked": 18,
     "loader_avg_per_day": 22765,
-    "loader_date": "September 05, 2026",
-    "loader_date_short": "Sep 05",
+    "loader_date": "September 06, 2026",
+    "loader_date_short": "Sep 06",
     "loader_month": "February 2026",
     "loaded_vs_drop": 139444,
     "avg_loaded_vs_drop": 7746,
